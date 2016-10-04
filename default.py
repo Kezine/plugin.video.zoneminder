@@ -148,14 +148,22 @@ def calculateAspect (width, height):
     else :
         return "2.35"
 
-def getUrl (path):
+def getUrl (accessVideoServer = False):
     server = __addon__.getSetting('server').strip("/").strip()
-    path = path.strip("/").strip() 
+    path = __addon__.getSetting('zmurl').strip("/").strip()
+    cgiurl = __addon__.getSetting('cgiurl').strip("/").strip()
     if __addon__.getSetting('https') == 'true':                
        protocol="https"
     else:         
        protocol="http"
+    if __addon__.getSetting('isnph') == 'true':
+        videoserver="nph-zms"
+    else:         
+        videoserver="zms"
     url = "%s://%s/%s/" % (protocol, server, path)
+    if accessVideoServer == True :
+        url += "%s/" % (cgiurl)
+        url += videoserver
     return url 
 
 def mysqlPassword (seedPw):
@@ -196,8 +204,8 @@ def createAuthString ():
     return authurl, videoauthurl
  
 def listCameras (addonHandle):
-    zmurl = getUrl(__addon__.getSetting('zmurl'))
-    cgiurl = getUrl(__addon__.getSetting('cgiurl'))
+    zmurl = getUrl()
+    cgiurl = getUrl(True)
     authurl, videoauthurl = createAuthString()
     url = "%s?skin=classic%s" % (zmurl, authurl)
     sys.stdout.write("ListCameras grabbing URL: %s" % url)
@@ -234,9 +242,9 @@ def listCameras (addonHandle):
                 info["Title"] = name + " " + localize (30205)
                 info["VideoResolution"] = width
                 info["Videoaspect"] = calculateAspect(width, height)
-                info["FileName"] = ("%snph-zms?monitor=%s&format=avi%s%s" % 
+                info["FileName"] = ("%s?monitor=%s&format=avi%s%s" % 
                                   (cgiurl, camId, qualityurl, videoauthurl))
-                info["Thumb"] =    ("%snph-zms?monitor=%s&mode=single%s" % 
+                info["Thumb"] =    ("%s?monitor=%s&mode=single%s" % 
                                        (cgiurl, camId, videoauthurl))
                 info["Mode"] = "TopLevel" #not currently used
                 addListItem (addonHandle, info, len(match), False)
@@ -252,7 +260,7 @@ def listCameras (addonHandle):
                 info["Title"] = localize (30300)
                 info["Mode"] = "Montage"
                 #TODO Remove hard-coded test code
-                info["FileName"] = ("%snph-zms?mode=jpeg&monitor=1&scale=25&"
+                info["FileName"] = ("%s?mode=jpeg&monitor=1&scale=25&"
                    "maxfps=10&user=admin&pass=5089inet" % (cgiurl))
                 info["Thumb"] = ""
                 info["NumCameras"] = NumCameras
@@ -305,7 +313,7 @@ def listEventsFolder (addonHandle, thisCameraId, baseUrl, info, doc, name):
 
 def listEvents (addonHandle, thisCameraId, numEvents):
     # Now get the camera events list
-    zmurl = getUrl(__addon__.getSetting('zmurl'))
+    zmurl = getUrl()
     authurl, videoauthurl = createAuthString()
     url = ("%s?%s&view=events&page=%s&filter[terms][0][attr]=MonitorId"
            "&filter[terms][0][op]=%%3D&filter[terms][0][val]=%i"
@@ -314,7 +322,7 @@ def listEvents (addonHandle, thisCameraId, numEvents):
     sys.stdout.write("ListEvents grabbing URL: %s" % url)
     cookie = ""
     doc, cookie = getHtmlPage (url, cookie)  
-    cgiurl = getUrl(__addon__.getSetting('cgiurl'))
+    cgiurl = getUrl(True)
     qualityurl = ("bitrate=%s&maxfps=%s" % 
         (__addon__.getSetting('bitrate'),
         __addon__.getSetting('fps')))
@@ -372,7 +380,7 @@ def listEvents (addonHandle, thisCameraId, numEvents):
                     # &maxfps=25&user=admin&pass=PASS
 
                     info["FileName"] = (
-                        "%snph-zms?source=event&event=%i&monitor=%i"
+                        "%s?source=event&event=%i&monitor=%i"
                         "&format=avi&%s&%s" % (cgiurl, eventId, 
                         thisCameraId, qualityurl, videoauthurl))
 
@@ -428,7 +436,7 @@ def convertMontageLayout (userLayout):
 def ShowMontageView (addonHandle, NumCameras) :
     sys.stdout.write("Montage view")
 
-    cgiurl = getUrl(__addon__.getSetting('cgiurl'))
+    cgiurl = getUrl(True)
     authurl, videoauthurl = createAuthString()
     qualityurl = ("&maxfps=%s" % (__addon__.getSetting('fps')))
     urlScale = convertMontageScale (__addon__.getSetting('scale'))
@@ -442,7 +450,7 @@ def ShowMontageView (addonHandle, NumCameras) :
         #Sample montage video URL
         #"http://192.168.1.107/cgi-bin/nph-zms?mode=jpeg&monitor=1&scale=25&
         # maxfps=10&user=admin&pass=PASS"
-        info["FileName"] = ("%snph-zms?mode=jpeg&monitor=%i&scale=%i&%s%s" %
+        info["FileName"] = ("%s?mode=jpeg&monitor=%i&scale=%i&%s%s" %
                          (cgiurl, camera, urlScale, qualityurl, videoauthurl))
         info["Thumb"] = ""
         info["Mode"] = "MontageVideo" #not currently used
@@ -506,5 +514,4 @@ elif queryMode[0] == 'Montage' :
          sortMethod = xbmcplugin.SORT_METHOD_LABEL)
 
     xbmcplugin.endOfDirectory(addonHandle)
-
 
