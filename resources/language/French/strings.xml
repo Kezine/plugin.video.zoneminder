@@ -1,0 +1,33 @@
+<strings>
+ <string id="30000">Nom du serveur/IP</string>
+ <string id="30013">HTTPS</string>
+ <string id="30001">Répertoire ZM</string>
+ <string id="30014">Utiliser le serveur video nph ?</string>
+ <string id="30002">Répertoire CGI</string>
+ <string id="30003">Débit maximum (MB/s)</string>
+ <string id="30004">Nombre maximum de frame par seconde</string>
+
+ <string id="30005">Utiliser l'authentification</string>
+ <string id="30006">Nom d'utilisateur</string>
+ <string id="30007">Mot de passe</string>
+ <string id="30008">Authentification par Hash</string>
+ <string id="30009">Hash Secret</string>
+ <string id="30010">Utiliser le hash IP</string>
+ <string id="30011">Utiliser l'IP de cet ordinateur</string>
+ <string id="30012">Hash IP Address</string>
+
+ <string id="30100">Connexion</string>
+ <string id="30101">Authentification</string>
+ <string id="30200">Authentification nécessaire</string>
+ <string id="30201">Configurez les paramètres d'authentification dans le plugin.</string>
+ <string id="30202">Aucune caméra</string>
+ <string id="30203">Enregistré</string>
+ <string id="30204">Evènement</string>
+ <string id="30205">Direct</string>
+ <string id="30206">sec</string>
+
+ <string id="30300">Montage</string>
+ <string id="30301">Echelle</string>
+ <string id="30302">Disposition</string>
+ <string id="30303">Video</string>
+</strings>
